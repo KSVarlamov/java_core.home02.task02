@@ -1,17 +1,8 @@
 import java.util.*;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class Main {
-    private static final Predicate<Person> isWorkAge = person -> {
-        if (person.getAge() < 18) {
-            return false;
-        }
-        if (person.getSex() == Sex.MAN && person.getAge() > 65) {
-            return false;
-        }
-        return person.getSex() != Sex.WOMAN || person.getAge() <= 60;
-    };
+
 
     public static void main(String[] args) {
         Collection<Person> persons = generateData();
@@ -31,7 +22,13 @@ public class Main {
         System.out.println("Фамилии призывников: \n" + inducteeList);
 
         List<Person> workablePersons = persons.stream()
-                .filter(isWorkAge)
+                .filter(person -> person.getAge() >= 18)
+                .filter(person -> {
+                    if (person.getSex() == Sex.MAN && person.getAge() > 65) {
+                        return false;
+                    }
+                    return person.getSex() != Sex.WOMAN || person.getAge() <= 60;
+                })
                 .filter(person -> person.getEducation() == Education.HIGHER)
                 .sorted(Comparator.comparing(Person::getFamily))
                 .collect(Collectors.toList());
